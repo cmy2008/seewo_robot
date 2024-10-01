@@ -58,7 +58,11 @@ def get_stu_info():
     re = requests.post(
         urls["get_stu_info"], headers=headers2, data=json.dumps(data), proxies=proxies
     )
-    return json.loads(decode(json.loads(re.text)["data"]))
+    data=json.loads(decode(json.loads(re.text)["data"]))
+    if data == []:
+        print("错误：未添加学生")
+        exit()
+    return data
 
 
 def get_last_msg():

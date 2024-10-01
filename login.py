@@ -31,19 +31,16 @@ def login():
     cookies = download_qrcode()
     print_qrcode(qrcode_file)
     status = 200
-    while status == 200 or 201:
+    while status == 200 or status == 201:
         data = check_qrcode(cookies)["data"]
         status = data["statusCode"]
         message = data["message"]
-        print(str(int(time.time())) + ": " + message, end="\r")
+        print(str(int(time.time())) + ": " + message + str(status), end="\r")
     else:
-        if status == 300 or 500:
-            print(message)
-            return False
-        else:
-            print(message + str(status))
-            print(data)
+        if status == 202:
             with open("tokens.json", "w") as f:
                 f.write(json.dumps(data))
                 f.close
             return True
+        else:
+            return False
