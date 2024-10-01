@@ -3,6 +3,8 @@
 import os, json, base64, requests
 from init import *
 from login import *
+
+
 def read_file(file):
     with open(file, "r") as f:
         context = f.read()
@@ -37,7 +39,9 @@ def status(re):
 
 
 def check_status():
-    re = requests.get(urls["status"]+uid+'/functionality', headers=headers)
+    re = requests.get(
+        urls["status"] + uid + "/functionality", headers=headers, proxies=proxies
+    )
     return status(re.text)
 
 
@@ -51,13 +55,15 @@ def get_stu_info():
             )
         },
     }
-    re = requests.post(urls["get_stu_info"], headers=headers2, data=json.dumps(data))
+    re = requests.post(
+        urls["get_stu_info"], headers=headers2, data=json.dumps(data), proxies=proxies
+    )
     return json.loads(decode(json.loads(re.text)["data"]))
 
 
 def get_last_msg():
-    re = requests.get(urls["get_last_msg"] + uid, headers=headers)
-    msg_o=json.loads(re.text)['data']
+    re = requests.get(urls["get_last_msg"] + uid, headers=headers, proxies=proxies)
+    msg_o = json.loads(re.text)["data"]
     if msg_o == []:
         return "[INFO] 无消息"
     return msg_o[0]["lastMsgTips"]
@@ -74,7 +80,9 @@ def get_msg(count):
             "childUid": userUid,
         },
     }
-    re = requests.post(urls["get_msg"], headers=headers2, data=json.dumps(data))
+    re = requests.post(
+        urls["get_msg"], headers=headers2, data=json.dumps(data), proxies=proxies
+    )
     return json.loads(decode(json.loads(re.text)["data"]))
 
 
@@ -95,7 +103,9 @@ def send_msg(context):
             "content": context,
         },
     }
-    re = requests.post(urls["send_msg"], headers=headers2, data=json.dumps(data))
+    re = requests.post(
+        urls["send_msg"], headers=headers2, data=json.dumps(data), proxies=proxies
+    )
     code = json.loads(re.text)["statusCode"]
     if code == -500:
         print("发送失败")
@@ -115,7 +125,9 @@ def get_msg_id(count):
 def del_msg(count):
     id = get_msg_id(count)
     data = {"action": "DELETE_KIDNOTE_V1_NOTE", "params": {"ids": [id]}}
-    re = requests.post(urls["del_msg"], headers=headers2, data=json.dumps(data))
+    re = requests.post(
+        urls["del_msg"], headers=headers2, data=json.dumps(data), proxies=proxies
+    )
     code = json.loads(re.text)["statusCode"]
     if code == -500:
         print("删除失败")
@@ -127,8 +139,9 @@ def del_msg(count):
         print("unknown error:")
         print(re.text)
 
+
 if not os.path.exists(token_file):
-    a=login()
+    a = login()
     if not a:
         exit()
 info = get_info(token_file)
@@ -137,7 +150,7 @@ headers["cookie"] = info["token"]
 headers["x-auth-token"] = info["token"]
 headers2["cookie"] = "x-auth-token=" + info["token"]
 if check_status() == False:
-    a=login()
+    a = login()
     if not a:
         exit()
 stu_info = get_stu_info()[0]

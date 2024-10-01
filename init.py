@@ -40,7 +40,7 @@ headers3 = {
   "Sec-Fetch-Mode": "no-cors",
   "Sec-Fetch-Site": "same-origin"
 }
-proxies = {"http": "http://192.168.1.12:9000", "https": None}
+proxies = {"http": "None", "https": None}
 urls = {
     "status": "https://campus.seewo.com/soul-bootstrap/seewo-phoenix-blood-server/mobile/user/v1/",
     "get_last_msg": "https://campus.seewo.com/soul-bootstrap/home-school-service/mobile/kidnote/v1/note/dialogs?userUid=",

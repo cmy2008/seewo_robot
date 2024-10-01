@@ -5,12 +5,12 @@ import time
 
 
 def get_cookies():
-    re = requests.get(url=urls["login_api"], headers=headers3)
+    re = requests.get(url=urls["login_api"], headers=headers3, proxies=proxies)
     return requests.utils.dict_from_cookiejar(re.cookies)
 
 
 def download_qrcode():
-    re = requests.get(urls["qrcode_image"], cookies=get_cookies())
+    re = requests.get(urls["qrcode_image"], cookies=get_cookies(), proxies=proxies)
     content = re.content
     with open(qrcode_file, "wb") as f:
         f.write(content)
@@ -22,8 +22,10 @@ def check_qrcode(cookies):
         urls["check_qrcode"] + str(int(time.time() * 1000)),
         headers=headers3,
         cookies=cookies,
+        proxies=proxies,
     )
     return json.loads(re.text)
+
 
 def login():
     cookies = download_qrcode()
