@@ -1,38 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import json, base64, requests, time
-from datetime import datetime
-
-token_file = "tokens.json"
-headers = {
-    "x-info-sign": "",
-    "user-agent": "Dart/2.18 (dart:io)",
-    "accept": "application/json,*/*",
-    "x-auth-app": "seewo-yunban-mobile",
-    "x-auth-appcode": "seewo-yunban-mobile",
-    "cookie": "",
-    "x-auth-token": "",
-    "accept-encoding": "gzip",
-    "host": "campus.seewo.com",
-    "x-app-version": "50",
-    "x-app-platform": "Android",
-}
-headers2 = {
-    "x-stale-if-timeout": "enable",
-    "accept": "*/*",
-    "user-agent": "Mozilla/5.0 (Linux; Android 9; Nexus 5 Build/PQ3A.190801.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/81.0.4044.117 Mobile Safari/537.36",
-    "content-type": "application/json",
-    "origin": "https://m-campus.seewo.com",
-    "x-requested-with": "com.seewo.cc.pro",
-    "sec-fetch-site": "same-origin",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-dest": "empty",
-    "accept-encoding": "gzip, deflate",
-    "accept-language": "zh-PH,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    "cookie": "",
-}
-
-
+import os, json, base64, requests
+from init import *
+from login import *
 def read_file(file):
     with open(file, "r") as f:
         context = f.read()
@@ -48,7 +18,8 @@ def decode(data):
 
 
 def get_info(file):
-    return json.loads(decode(load_json(file)["data"]))
+    return load_json(file)
+
 
 def status(re):
     code = json.loads(re)["statusCode"]
@@ -64,8 +35,9 @@ def status(re):
         print(re)
         return False
 
+
 def check_status():
-    re = requests.get(urls["status"], headers=headers)
+    re = requests.get(urls["status"]+uid+'/functionality', headers=headers)
     return status(re.text)
 
 
@@ -84,8 +56,11 @@ def get_stu_info():
 
 
 def get_last_msg():
-    re = requests.get(urls["get_last_msg"], headers=headers)
-    return json.loads(re.text)["data"][0]["lastMsgTips"]
+    re = requests.get(urls["get_last_msg"] + uid, headers=headers)
+    msg_o=json.loads(re.text)['data']
+    if msg_o == []:
+        return "[INFO] 无消息"
+    return msg_o[0]["lastMsgTips"]
 
 
 def get_msg(count):
@@ -152,25 +127,19 @@ def del_msg(count):
         print("unknown error:")
         print(re.text)
 
-
+if not os.path.exists(token_file):
+    a=login()
+    if not a:
+        exit()
 info = get_info(token_file)
-uid = info["uid"]
-urls = {
-    "status": "https://campus.seewo.com/soul-bootstrap/seewo-phoenix-blood-server/mobile/user/v1/"
-    + uid
-    + "/functionality",
-    "get_last_msg": "https://campus.seewo.com/soul-bootstrap/home-school-service/mobile/kidnote/v1/note/dialogs?userUid="
-    + uid,
-    "get_msg": "https://m-campus.seewo.com/class/apis.json?action=GET_KIDNOTE_V1_BYPARENTUID_BYCHILDUID_NOTES",
-    "get_stu_info": "https://m-campus.seewo.com/class/apis.json?action=GET_STUDENT_V1_PARENT_BYPARENTID_CHILDREN_LIST",
-    "send_msg": "https://m-campus.seewo.com/class/apis.json?action=POST_KIDNOTE_V1_NOTE",
-    "del_msg": "https://m-campus.seewo.com/class/apis.json?action=DELETE_KIDNOTE_V1_NOTE",
-}
+uid = info["userId"]
 headers["cookie"] = info["token"]
 headers["x-auth-token"] = info["token"]
 headers2["cookie"] = "x-auth-token=" + info["token"]
-if check_status() ==False:
-    exit()
+if check_status() == False:
+    a=login()
+    if not a:
+        exit()
 stu_info = get_stu_info()[0]
 schoolUid = stu_info["schoolUid"]
 classUid = stu_info["classUid"]
