@@ -70,7 +70,7 @@ def get_last_msg():
     msg_o = json.loads(re.text)["data"]
     if msg_o == []:
         return "[INFO] 无消息"
-    elif msg_o == '':
+    elif msg_o[0]["lastMsgTips"] == '':
         return "[INFO] 消息为空"
     return msg_o[0]["lastMsgTips"]
 
