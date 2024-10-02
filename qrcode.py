@@ -1,6 +1,5 @@
 # 代码源自@石头三颗：https://zhuanlan.zhihu.com/p/21916363 @金明熠 修改，使用GPT4-o解析和优化
 
-import cv2
 import numpy as np
 from PIL import Image
 
