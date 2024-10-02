@@ -10,6 +10,6 @@ while True:
         try:
             send = os.popen(command).read()
             print(send)
-            send_msg(send)
+            send_msg(send,1)
         except:
             print("error")

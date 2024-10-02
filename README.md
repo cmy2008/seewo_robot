@@ -23,4 +23,4 @@ python3 auto.py
 5. 若程序正常运行，将会输出最新留言消息。
 
 ## API相关说明
-详见[Seewo-API](https://github.com/cmy2008/api-collet/blob/main/seewo/seewo.md)
+详见[Seewo-API](https://github.com/cmy2008/api-collet/blob/main/seewo/readme.md)
