@@ -66,11 +66,14 @@ def get_stu_info():
 
 
 def get_last_msg():
+    #该处应有异常处理
     re = requests.get(urls["get_last_msg"] + uid, headers=headers, proxies=proxies)
     msg_o = json.loads(re.text)["data"]
+    if msg_o is None:
+        return "[ERROR] 无法获取消息体"
     if msg_o == []:
         return "[INFO] 无消息"
-    elif msg_o == '':
+    if msg_o[0]["lastMsgTips"] == '':
         return "[INFO] 消息为空"
     return msg_o[0]["lastMsgTips"]
 
@@ -150,7 +153,10 @@ if not os.path.exists(token_file):
     a = login()
     if not a:
         exit()
-info = get_info(token_file)
+try:
+    info = get_info(token_file)
+except:
+    print("Connection error")
 uid = info["userId"]
 headers["cookie"] = info["token"]
 headers["x-auth-token"] = info["token"]
@@ -158,7 +164,9 @@ headers2["cookie"] = "x-auth-token=" + info["token"]
 if check_status() == False:
     a = login()
     if not a:
-        exit()
+        exit
+else:
+    exit
 stu_info = get_stu_info()[0]
 schoolUid = stu_info["schoolUid"]
 classUid = stu_info["classUid"]
