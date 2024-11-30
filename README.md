@@ -3,7 +3,7 @@
 ## 介绍
 Seewo 班牌机器人是一个用于「希沃云班」微信小程序或「希沃魔方」APP的聊天机器人
 ## 功能
-该程序利用「希沃统一服务平台」的相关API实现「希沃云班」的「亲亲留言」以及相关功能，已实现的有：
+该程序利用「希沃统一服务平台」的相关API实现「希沃云班」的「亲情留言」以及相关功能，已实现的有：
 - 微信二维码登录
 - 留言接收
 - 留言发送
@@ -23,4 +23,4 @@ python3 auto.py
 5. 若程序正常运行，将会输出最新留言消息。
 
 ## API相关说明
-详见[Seewo-API](https://github.com/cmy2008/api-collet/blob/main/seewo/seewo.md)
+详见[Seewo-API](https://github.com/cmy2008/api-collet/blob/main/seewo/readme.md)

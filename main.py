@@ -73,7 +73,7 @@ def get_last_msg():
         return "[ERROR] 无法获取消息体"
     if msg_o == []:
         return "[INFO] 无消息"
-    if msg_o[0]["lastMsgTips"] == '':
+    elif msg_o[0]["lastMsgTips"] == '':
         return "[INFO] 消息为空"
     return msg_o[0]["lastMsgTips"]
 
@@ -99,7 +99,7 @@ def get_msg_context(count):
     return get_msg(count)["result"][0]["content"]
 
 
-def send_msg(context):
+def send_msg(context,type):
     data = {
         "action": "POST_KIDNOTE_V1_NOTE",
         "params": {
@@ -108,7 +108,7 @@ def send_msg(context):
             "senderUid": uid,
             "receiverUid": userUid,
             "senderType": "parent",
-            "type": 1,
+            "type": type,
             "content": context,
         },
     }

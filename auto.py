@@ -38,7 +38,7 @@ while True:
         try:
             send = os.popen(command).read()
             print(send)
-            send_msg(send[:199])
+            send_msg(send[:199],1)
         except:
             log="[ERROR] 发送失败"
             logw(log)
