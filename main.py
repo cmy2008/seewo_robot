@@ -128,7 +128,8 @@ def send_msg(context):
 
 
 def get_msg_id(count):
-    return get_msg(count)["result"][0]["id"]
+    id=get_msg(count)["result"][0]["id"]
+    return id
 
 
 def del_msg(count):
