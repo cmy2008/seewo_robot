@@ -36,6 +36,7 @@ while True:
     if last_msg[0] == "/":
         command = last_msg[1:]
         try:
+            # TODO: 超时处理
             send = os.popen(command).read()
             print(send)
             send_msg(send[:199],1)

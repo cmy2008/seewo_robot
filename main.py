@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# TODO: 多学生选择
 import os, json, base64, requests
 from init import *
 from login import *
@@ -66,7 +67,7 @@ def get_stu_info():
 
 
 def get_last_msg():
-    #该处应有异常处理
+    #TODO: 异常处理
     re = requests.get(urls["get_last_msg"] + uid, headers=headers, proxies=proxies)
     msg_o = json.loads(re.text)["data"]
     if msg_o is None:

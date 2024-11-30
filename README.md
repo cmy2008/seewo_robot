@@ -20,7 +20,7 @@ pip3 install requests np
 python3 auto.py
 ```
 4. 首次运行会出现二维码，必须使用**微信扫码**登录。
-5. 若程序正常运行，将会输出最新留言消息。
+5. 若程序正常运行，将会实时输出最新留言消息。当接收到开头为“/”的留言时，会执行其后的内容作为命令执行并发送输出结果。
 
 ## API相关说明
 详见[Seewo-API](https://github.com/cmy2008/api-collet/blob/main/seewo/readme.md)
