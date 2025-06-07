@@ -85,6 +85,6 @@ def get_qrcode(cell, img: Image, w: int, h: int):
 
 def print_qrcode(file):
     im = Image.open(file)
-    pil_image = im.crop((15,15,im.size[0]-15,im.size[1]-15))
+    pil_image = im.crop((15,15,im.size[0],im.size[1]))
     width,height = pil_image.size
     get_qrcode(get_cell(pil_image, width, height), pil_image, width, height)
