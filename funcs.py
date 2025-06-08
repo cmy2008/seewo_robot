@@ -1,26 +1,35 @@
 import base64
 import json
 import time
+import os
 
 filedate=time.strftime('%Y-%m-%d', time.localtime())
-def decode(data):
+def decode(data: str):
     return base64.b64decode(data[7:])
 
-def read_file(file):
+def read_file(file: str):
     with open(file, "r") as f:
-        context = f.read()
-        return context
+        content = f.read()
+        return content
 
+def write_file(file: str,data: str | bytes):
+    with open(file, "w") as f:
+        f.write(json.dumps(data))
+        f.close
+    return True
 
-def load_json(file):
+def load_json(file: str):
     return json.loads(read_file(file))
 
 
 def date():
     return '[' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()) + ']: '
 
-def logw(t):
+def logw(t: str):
         log=date() + t + '\n'
-        dirc='logs/' + filedate + '.log'
+        log_dir='logs/'
+        dirc=log_dir + filedate + '.log'
+        if not os.path.isdir(log_dir):
+            os.mkdir(log_dir)
         with open(dirc, 'a') as file:
             file.write(log)

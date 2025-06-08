@@ -88,8 +88,7 @@ def get_cookies():
 def download_qrcode():
     re = requests.get(urls.qrcode_image, cookies=get_cookies(), proxies=proxies)
     content = re.content
-    with open(qrcode_file, "wb") as f:
-        f.write(content)
+    write_file(qrcode_file, content)
     return requests.utils.dict_from_cookiejar(re.cookies)
 
 
@@ -114,9 +113,7 @@ def login():
         print(str(int(time.time())) + ": " + message + str(status), end="\r")
     else:
         if status == 202:
-            with open("tokens.json", "w") as f:
-                f.write(json.dumps(data))
-                f.close
+            write_file("tokens.json", data)
             return True
         else:
             return False

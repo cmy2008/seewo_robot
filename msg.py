@@ -3,6 +3,7 @@ import json
 from funcs import *
 from login import *
 from stu import *
+
 class msg():
     def __init__(self,account: acc, student: stu) -> None:
         self.acc=account
@@ -37,11 +38,10 @@ class msg():
         return json.loads(decode(json.loads(re.text)["data"]))
 
 
-    def get_context(self,count:int):
+    def get_content(self,count:int):
         return self.get(count)["result"][0]["content"]
 
-
-    def send(self,context:str,type:int):
+    def send(self,content:str,type:int,resUrl='',voiceLength=0,resConfig=''):
         data = {
             "action": "POST_KIDNOTE_V1_NOTE",
             "params": {
@@ -51,9 +51,19 @@ class msg():
                 "receiverUid": self.stu.userUid,
                 "senderType": "parent",
                 "type": type,
-                "content": context,
             },
         }
+        match type:
+            case 0:
+                data['params']["content"]=content
+            case 1:
+                data['params']["content"]=content
+            case 3:
+                data['params']['voiceLength'] = voiceLength
+                data['params']['resUrl'] = resUrl
+            case 6:
+                data['params']['resUrl'] = resUrl
+                data['params']['resConfig'] = resConfig
         re = requests.post(
             urls.send_msg, headers=self.acc.headers2, data=json.dumps(data), proxies=proxies
         )
@@ -62,7 +72,7 @@ class msg():
             print("发送失败")
             return False
         elif code == 200:
-            print("发送成功：" + context)
+            print("发送成功：" + content)
             return True
         else:
             print("unknown error:")

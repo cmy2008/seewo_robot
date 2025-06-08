@@ -24,7 +24,7 @@ def main():
             logw(log)
         if msg_id != get_id:
             try:
-                last_msg=stu_msg.get_context(1)
+                last_msg=stu_msg.get_content(1)
                 msg_id=get_id
             except Exception as err:
                 log="[ERROR] 消息获取失败"
