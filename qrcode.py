@@ -4,14 +4,14 @@ import numpy as np
 from PIL import Image
 
 # 计算每个方块的大小像素
-def get_cell_size(img: Image, x, y, x2, y2):
+def get_cell_size(img, x, y, x2, y2):
     for j in range(x, x2):
         for i in range(y, y2):
             pix = img.getpixel((j, i))
             if pix == 255:
                 return j - x  # 每个黑色格子的像素点大小
 
-def get_cell(img: Image, w: int, h: int):
+def get_cell(img, w: int, h: int):
     flag = 0
     for y in range(h):
         for x in range(w):
@@ -46,7 +46,7 @@ unicode_mapping = {
     '█': '██'
 }
 
-def get_qrcode(cell, img: Image, w: int, h: int):
+def get_qrcode(cell, img, w: int, h: int):
     height = int(h / cell)
     width = int(w / cell)
     bitcode = []

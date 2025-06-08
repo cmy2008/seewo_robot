@@ -1,9 +1,13 @@
 import time
-
+import os
 
 qrcode_file= 'qrcode.png'
 token_file = "tokens.json"
-proxies: dict[str, str] = {"http": None, "https": None}
+uploads_file = "uploads.json"
+if not os.path.isfile(uploads_file):
+    with open(uploads_file, 'wb') as f:
+        f.write(b"{}")
+proxies: dict[str, str] = {"http": None, "https": None} # type: ignore
 headers_nocookie = {
 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
 "Accept": "image/avif,image/webp,*/*",
@@ -22,6 +26,7 @@ class urls():
     get_stu_info = "https://m-campus.seewo.com/class/apis.json?action=GET_STUDENT_V1_PARENT_BYPARENTID_CHILDREN_LIST"
     send_msg = "https://m-campus.seewo.com/class/apis.json?action=POST_KIDNOTE_V1_NOTE"
     del_msg = "https://m-campus.seewo.com/class/apis.json?action=DELETE_KIDNOTE_V1_NOTE"
+    upload = "https://m-campus.seewo.com/class/apis.json?action=POST_MOBILE_V1_RESOURCE_CSTORE_UPLOADPOLICY"
     login_api = "https://id.seewo.com/auth/loginApi?_time" + str(int(time.time() * 1000))
     qrcode_image = "https://id.seewo.com/scan/qrcode?oriSys=mis-admin&t=" + str(time.time()*1000)
     check_qrcode = "https://id.seewo.com/scan/pcCheckQrcode?type=long&_=" + str(time.time()*1000)
