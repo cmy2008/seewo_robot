@@ -7,14 +7,25 @@ from login import *
 from funcs import *
 from stu import *
 from msg import *
+from upload import *
 
+account=acc()
+student=stu(account)
+stu_msg=msg(account,student)
+
+def upload_file(account: acc,file,type="image/png"):
+    up=Upload(account)
+    up.upload(file=file,type=type)
+    return up.downloadUrl
+
+def send_audio(file):
+    stu_msg.send(file,1)
+    url=upload_file(account,file)
+    stu_msg.send('',3,url,666)
 def main():
-    account=acc()
-    student=stu(account)
     last_msg = ' '
     msg_id=0
     get_id=0
-    stu_msg=msg(account,student)
     while True:
         time.sleep(1)
         try:

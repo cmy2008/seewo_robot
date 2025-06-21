@@ -11,7 +11,7 @@ class Upload():
 
     def get_resource(self):
         api={"action":"POST_MOBILE_V1_RESOURCE_CSTORE_UPLOADPOLICY","params":{"appId":"10388","clientIp":"","clientId":"","requestId":""}}
-        re = requests.post(urls.upload,data=json.dumps(api),headers=self.acc.mheaders,proxies={'http': 'http://192.168.0.104:9000','https':'http://192.168.0.104:9000'}, verify=False)
+        re = requests.post(urls.upload,data=json.dumps(api),headers=self.acc.mheaders)
         try:
             self.res=json.loads(re.text)
             self.uploadUrl=self.res['data']['policyList'][0]['uploadUrl']
@@ -37,10 +37,12 @@ class Upload():
             print(self.res['message'])
         return None
     
-    def upload(self,file):
+    def upload(self,file,type="image/png"):
         if self.isupload:
             print("该文件已上传: " + self.downloadUrl)
             return None
+        if os.path.splitext(file)[1] == "m4a":
+            type="audio/mp4"
         data = {
             "key": (None, self.res['data']['policyList'][0]['formFields'][0]['value']),
             "policy": (None, self.res['data']['policyList'][0]['formFields'][1]['value']),
@@ -53,21 +55,20 @@ class Upload():
             "x:appid": (None, self.res['data']['policyList'][0]['formFields'][8]['value']),
             "x:sessionid": (None, self.res['data']['policyList'][0]['formFields'][9]['value']),
             "x:bucketid": (None, self.res['data']['policyList'][0]['formFields'][10]['value']),
-            "file": ('IMG_0188.PNG', open(file, "rb"), "image/png")
+            "file": ('IMG_' + str(random.randrange(0, 1000)) + '.PNG', open(file, "rb"), type)
         }
         boundary = '----WebKitFormBoundary' + ''.join(random.sample(string.ascii_letters + string.digits, 16))
         multipart = MultipartEncoder(fields=data, boundary=boundary)
         self.headers['Content-Type']=multipart.content_type
         try:
-            response = requests.post(self.uploadUrl, headers=self.headers, data=multipart, timeout=(self.expiretime-time.time()),proxies={'http': 'http://192.168.0.104:9000','https':'http://192.168.0.104:9000'}, verify=False)
+            response = requests.post(self.uploadUrl, headers=self.headers, data=multipart, timeout=(self.expiretime-time.time()))
             uploaded=json.loads(response.text)
             if uploaded["code"] == 0:
                 self.isupload=True
                 self.downloadUrl=uploaded['data']['downloadUrl']
-                uploads: dict
                 uploads=json.loads(read_file(uploads_file))
                 uploads[file] = (uploaded['data'])
-                write_file(uploads_file,uploads)
+                write_file(uploads_file,json.dumps(uploads).encode())
                 print("上传成功: " + self.downloadUrl)
             else:
                 print("上传失败: " + response.text)
