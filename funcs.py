@@ -12,9 +12,9 @@ def read_file(file: str):
         content = f.read()
         return content
 
-def write_file(file: str,data: str | bytes | dict | list):
-    with open(file, "w") as f:
-        f.write(json.dumps(data))
+def write_file(file: str,data: bytes):
+    with open(file, "wb") as f:
+        f.write(data)
         f.close
     return True
 
