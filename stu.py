@@ -1,6 +1,7 @@
 from init import *
 import requests
 from login import *
+from api import *
 
 class stu():
     def __init__(self,acc: acc,count=0) -> None:
@@ -9,22 +10,18 @@ class stu():
         self.schoolUid = info["schoolUid"]
         self.classUid = info["classUid"]
         self.userUid = info["userUid"]
-    
+
     def info(self)->dict:
-        data = {
-            "action": "GET_STUDENT_V1_PARENT_BYPARENTID_CHILDREN_LIST",
-            "params": {
-                "pxSafeData": "scData:"
-                + base64.b64encode(json.dumps({"parentId": self.acc.uid}).encode("utf-8")).decode(
-                    "utf-8"
-                )
-            },
-        }
-        re = requests.post(
-            urls.get_stu_info, headers=self.acc.mheaders, data=json.dumps(data), proxies=proxies
-        )
-        data=json.loads(decode(json.loads(re.text)["data"]))
-        if data == []:
+        data = {"parentId": self.acc.uid}
+        result=json.loads(pxdecode(api().action("GET_STUDENT_V1_PARENT_BYPARENTID_CHILDREN_LIST",pxencode(data),self.acc)))
+        if result == []:
             print("错误：未添加学生")
-            exit()
-        return data
+            # exit()
+        return result
+
+    def get_stu(self,name):
+        data={"schoolUid":self.schoolUid,"classUid":self.classUid,"name":name}
+        return json.loads(pxdecode(api().action("POST_STUDENT_V1_BYSCHOOLUID_CLASS_BYCLASSUID_STUDENTS",pxencode(data),self.acc)))
+    
+    def add_stu(self, stu_uid):
+        pass

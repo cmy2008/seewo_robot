@@ -1,5 +1,6 @@
 from funcs import *
 from login import *
+from api import *
 import random,string
 from requests_toolbelt import MultipartEncoder
 
@@ -10,10 +11,10 @@ class Upload():
         self.get_resource()
 
     def get_resource(self):
-        api={"action":"POST_MOBILE_V1_RESOURCE_CSTORE_UPLOADPOLICY","params":{"appId":"10388","clientIp":"","clientId":"","requestId":""}}
-        re = requests.post(urls.upload,data=json.dumps(api),headers=self.acc.mheaders)
+        data={"appId":"10388","clientIp":"","clientId":"","requestId":""}
+        post = api().action("POST_MOBILE_V1_RESOURCE_CSTORE_UPLOADPOLICY",data,self.acc)
         try:
-            self.res=json.loads(re.text)
+            self.res=post
             self.uploadUrl=self.res['data']['policyList'][0]['uploadUrl']
             self.expiretime=int(time.time()) + self.res['data']['expireSeconds']
             self.headers={
@@ -32,7 +33,7 @@ class Upload():
             }
         except json.decoder.JSONDecodeError:
             print("上传失败： 请求错误")
-            print(re.text)
+            print(post)
         except KeyError:
             print(self.res['message'])
         return None

@@ -32,32 +32,17 @@ class acc():
         }
         self.mheaders = {
             "x-info-sign": "",
-            "user-agent": "Dart/2.18 (dart:io)",
+            "user-agent": "Mozilla/5.0 (Linux; Android 9; Nexus 5 Build/PQ3A.190801.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/81.0.4044.117 Mobile Safari/537.36",
             "accept": "application/json,*/*",
             "x-auth-app": "seewo-yunban-mobile",
             "x-auth-appcode": "seewo-yunban-mobile",
             "cookie": f"x-auth-appCode=seewo-yunban-mobile; x-auth-token={info['token']}; x-token={info['token']}",
             "accept-encoding": "gzip",
-            "content-type": "application/json",
-            "host": "m-campus.seewo.com"
+            "content-type": "application/json"
         }
         if not self.check_status():
             self.__init__(type=1)
             return None
-        self.headers2 = {
-            "x-stale-if-timeout": "enable",
-            "accept": "*/*",
-            "user-agent": "Mozilla/5.0 (Linux; Android 9; Nexus 5 Build/PQ3A.190801.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/81.0.4044.117 Mobile Safari/537.36",
-            "content-type": "application/json",
-            "origin": "https://m-campus.seewo.com",
-            "x-requested-with": "com.seewo.cc.pro",
-            "sec-fetch-site": "same-origin",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-dest": "empty",
-            "accept-encoding": "gzip, deflate",
-            "accept-language": "zh-PH,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-            "cookie": "x-auth-token=" + info["token"],
-        }
         return None
     
     def status(self,re):
@@ -76,17 +61,17 @@ class acc():
         
     def check_status(self):
         re = requests.get(
-            urls.status + self.uid + "/functionality", headers=self.headers, proxies=proxies
+            urls().status + self.uid + "/functionality", headers=self.headers, proxies=proxies, verify=verify
         )
         return self.status(re.text)
 
 def get_cookies():
-    re = requests.get(url=urls.login_api, headers=headers_nocookie, proxies=proxies)
+    re = requests.get(url=urls().login_api, headers=headers_nocookie, proxies=proxies)
     return requests.utils.dict_from_cookiejar(re.cookies)
 
 
 def download_qrcode():
-    re = requests.get(urls.qrcode_image, cookies=get_cookies(), proxies=proxies)
+    re = requests.get(urls().qrcode_image, cookies=get_cookies(), proxies=proxies)
     content = re.content
     write_file(qrcode_file, content)
     return requests.utils.dict_from_cookiejar(re.cookies)
@@ -94,7 +79,7 @@ def download_qrcode():
 
 def check_qrcode(cookies):
     re = requests.get(
-        urls.check_qrcode,
+        urls().check_qrcode,
         headers=headers_nocookie,
         cookies=cookies,
         proxies=proxies,

@@ -8,6 +8,7 @@ from funcs import *
 from stu import *
 from msg import *
 from upload import *
+from yunban import *
 
 account=acc()
 student=stu(account)
@@ -17,6 +18,15 @@ def upload_file(account: acc,file,type="image/png"):
     up=Upload(account)
     up.upload(file=file,type=type)
     return up.downloadUrl
+
+def send_msg(msg: msg,send: str):
+    try:
+        # TODO: 超时处理
+        print(send)
+        stu_msg.send(send[:199],1)
+    except:
+        log="[ERROR] 发送失败"
+        logw(log)
 
 def send_audio(file):
     stu_msg.send(file,1)
@@ -48,14 +58,12 @@ def main():
             last_msg = ' '
         if last_msg[0] == "/":
             command = last_msg[1:]
-            try:
-                # TODO: 超时处理
-                send = os.popen(command).read()
-                print(send)
-                stu_msg.send(send[:199],1)
-            except:
-                log="[ERROR] 发送失败"
-                logw(log)
+            args=command.split(' ')
+            match args[0]:
+                case "getpass":
+                    send_msg(stu_msg,str(getpass(account,student.schoolUid,args[1],args[2])))
+                case _:
+                    send_msg(stu_msg,os.popen(command).read())
 
 if __name__ == "__main__":
     main()

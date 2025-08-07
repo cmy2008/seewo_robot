@@ -4,8 +4,15 @@ import time
 import os
 
 filedate=time.strftime('%Y-%m-%d', time.localtime())
-def decode(data: str):
-    return base64.b64decode(data[7:])
+
+def encode_json(data: dict):
+    return base64.b64encode(json.dumps(data).encode("utf-8")).decode("utf-8")
+
+def pxdecode(data: dict):
+    return base64.b64decode(data["data"][7:])
+
+def pxencode(data: dict):
+    return {"pxSafeData": f"scData:{encode_json(data)}"}
 
 def read_file(file: str):
     with open(file, "r") as f:
