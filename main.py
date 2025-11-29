@@ -29,9 +29,10 @@ def send_msg(msg: msg,send: str):
         logw(log)
 
 def send_audio(file):
-    stu_msg.send(file,1)
+    stu_msg.send(os.path.basename(file),1)
     url=upload_file(account,file)
     stu_msg.send('',3,url,666)
+
 def main():
     last_msg = ' '
     msg_id=0
@@ -62,6 +63,12 @@ def main():
             match args[0]:
                 case "getpass":
                     send_msg(stu_msg,str(getpass(account,student.schoolUid,args[1],args[2])))
+                case "发送音乐":
+                    if os.path.exists("music")==False:
+                        os.mkdir("music")
+                    filelist=os.listdir("music")
+                    for file in filelist:
+                        send_audio("music/"+file)
                 case _:
                     send_msg(stu_msg,os.popen(command).read())
 

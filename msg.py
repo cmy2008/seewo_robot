@@ -45,15 +45,15 @@ class msg():
             }
         match type:
             case 0:
-                data['params']["content"]=content
+                data["content"]=content
             case 1:
-                data['params']["content"]=content
+                data["content"]=content
             case 3:
-                data['params']['voiceLength'] = voiceLength
-                data['params']['resUrl'] = resUrl
+                data['voiceLength'] = voiceLength
+                data['resUrl'] = resUrl
             case 6:
-                data['params']['resUrl'] = resUrl
-                data['params']['resConfig'] = resConfig
+                data['resUrl'] = resUrl
+                data['resConfig'] = resConfig
         post=api().action("POST_KIDNOTE_V1_NOTE",data,self.acc)
         code = post["statusCode"]
         if code == -500:
