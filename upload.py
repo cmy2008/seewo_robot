@@ -68,7 +68,7 @@ class Upload():
                 self.isupload=True
                 self.downloadUrl=uploaded['data']['downloadUrl']
                 uploads=json.loads(read_file(uploads_file))
-                uploads[file] = (uploaded['data'])
+                uploads[os.path.basename(file)] = (uploaded['data'])
                 write_file(uploads_file,json.dumps(uploads).encode())
                 print("上传成功: " + self.downloadUrl)
             else:

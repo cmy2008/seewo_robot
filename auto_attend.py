@@ -1,8 +1,7 @@
 import sys
 sys.path.append('.')
-from yunban import *
+from yunabn_token import *
 
-test=yunban("")
 classlist=test.getclasslist()
 students=test.getstulist(classlist[35]["uid"])
 events=test.getevents(classlist[35]["roomUid"])

@@ -2,6 +2,7 @@ from init import *
 from login import *
 from api import *
 import random
+from datetime import datetime, date, timedelta
 
 def getpass(account:acc,schoolUid, snCode,time,classUid=""):
     data={
@@ -12,6 +13,21 @@ def getpass(account:acc,schoolUid, snCode,time,classUid=""):
     "classUid": classUid
   }
     return api().action("GET_AUTHORIZATION_V1_USER_OFFLINE_VERIFY",data,account)
+
+def getpass2():
+    import pandas.io.clipboard as cb
+    account=acc()
+    while True:
+        url: str
+        url=cb.paste()
+        if url.startswith("https://id.seewo.com/"):
+            snCode=url.split("snCode%3D")[1].split("%26")[0]
+            timestamp=url.split("timestamp%3D")[1].split("%26")[0]
+            schoolUid=url.split("schoolUid%3D")[1].split("%26")[0]
+            print(getpass(account,schoolUid,snCode,timestamp),end="\r")
+            # print(snCode+' ' +timestamp)
+            time.sleep(0.5)
+
 class yunban:
     def __init__(self,token,schoolid) -> None:
         self.token=token
@@ -70,14 +86,56 @@ class yunban:
             "attendanceDate": "2025-11-08", this decides the now date
         "attendanceTime": "17:56:05", this should be random between self.geteventtime(event)[0] and event["endTime"]
     '''
+
+
+    def random_time_in_range(self,start_str: str, end_str: str) -> str:
+      """
+      生成当天在指定时间范围内的随机时间（包含秒）。
+      
+      参数:
+          start_str: 开始时间，格式 "HH:MM"（例如 "09:00"）
+          end_str:   结束时间，格式 "HH:MM"（例如 "17:30"）
+      
+      返回:
+          字符串，格式 "YYYY-MM-DD HH:MM:SS"，为当天在该范围内的随机时间。
+      
+      注意:
+          - 假设 start_str <= end_str（不跨午夜）。
+          - 如果结束时间早于或等于开始时间，会抛出 ValueError。
+      """
+      # 解析时间字符串
+      start_time = datetime.strptime(start_str, "%H:%M").time()
+      end_time = datetime.strptime(end_str, "%H:%M").time()
+      
+      # 获取当天日期
+      today = date.today()
+      
+      # 组合成完整的 datetime 对象
+      start_dt = datetime.combine(today, start_time)
+      end_dt = datetime.combine(today, end_time)
+      
+      # 检查时间范围有效性
+      if end_dt <= start_dt:
+          raise ValueError("结束时间必须晚于开始时间（不支持跨天范围）")
+      
+      # 计算时间间隔的总秒数
+      total_seconds = (end_dt - start_dt).total_seconds()
+      
+      # 生成随机秒数（浮点数，确保秒部分也能随机）
+      random_seconds = random.uniform(0, total_seconds)
+      
+      # 添加随机偏移
+      random_dt = start_dt + timedelta(seconds=random_seconds)
+      
+      # 格式化输出（秒会自动四舍五入到整数）
+      return random_dt.strftime("%H:%M:%S")
+
     def randomtime(self,event):
+      # datenow=time.strftime('%Y-%m-%d', time.localtime())
       start=self.geteventtime(event)[0]
       end=event["endTime"]
-      s_t=time.strptime(start+" "+start, "%Y-%m-%d %H:%M")
-      e_t=time.strptime(end, "%H:%M")
-      plus=random.randint(0,t)
+      return self.random_time_in_range(start,end)
 
-    
     def attend(self,name,uid,sid,event,date,time,classUid,roomUid):
       payload = {
         "attendanceData": [
