@@ -24,9 +24,19 @@ class yunban:
     }
     def getclasslist(self):
       url = f"https://campus.seewo.com/mis-cloud-route-server/api/classmember/v1/school/{self.schoolid}/classes"
-      response = requests.request("GET", url, headers=self.headers, verify=False)
+      response = requests.request("GET", url, headers=self.headers)
       return response.json()["data"]
     
+    def getnotes(self,uid,parentuid,num):
+      url = f"https://campus.seewo.com/mis-cloud-route-server/api/kidnote/v4/parent/{parentuid}/child/{uid}/notes?start={num}&pageSize=1"
+      response = requests.request("GET", url, headers=self.headers,verify=False)
+      return response.json()["data"]
+    
+    def getparents(self,uid):
+      url = f"https://campus.seewo.com/mis-cloud-route-server/api/kidnote/v1/{uid}/parent/note/count"
+      response = requests.request("GET", url, headers=self.headers,verify=False)
+      return response.json()["data"]
+
     def getstulist(self,classid):
       url = f"https://campus.seewo.com/mis-cloud-route-server/api/classmember/v1/school/{self.schoolid}/students?classUids={classid}"
       response = requests.request("GET", url, headers=self.headers, verify=False)
@@ -37,7 +47,13 @@ class yunban:
         if stu["name"]==stuname:
           return stu
       return {}
-    
+
+    def serchstubyuid(self,stuname,students):
+      for stu in students:
+        if stu["uid"]==stuname:
+          return stu
+      return {}
+
     def getevents(self,roomUid):
       url = f"https://campus.seewo.com/mis-cloud-route-server/api/attendance/v3/{self.schoolid}/events?roomUid={roomUid}"
       response = requests.request("GET", url, headers=self.headers, verify=False)
@@ -57,20 +73,10 @@ class yunban:
     def randomtime(self,event):
       start=self.geteventtime(event)[0]
       end=event["endTime"]
-      start_h,start_m=map(int,start.split(":"))
-      end_h,end_m=map(int,end.split(":"))
-      if start_h==end_h:
-        rand_m=random.randint(start_m,end_m-1)
-        return f"{start_h:02d}:{rand_m:02d}:{random.randint(0,59):02d}"
-      else:
-        rand_h=random.randint(start_h,end_h)
-        if rand_h==start_h:
-          rand_m=random.randint(start_m,59)
-        elif rand_h==end_h:
-          rand_m=random.randint(0,end_m)
-        else:
-          rand_m=random.randint(0,59)
-        return f"{rand_h:02d}:{rand_m:02d}:{random.randint(0,59):02d}"
+      s_t=time.strptime(start+" "+start, "%Y-%m-%d %H:%M")
+      e_t=time.strptime(end, "%H:%M")
+      plus=random.randint(0,t)
+
     
     def attend(self,name,uid,sid,event,date,time,classUid,roomUid):
       payload = {

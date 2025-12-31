@@ -5,3 +5,4 @@ __pycache__
 test*
 debug.py
 music/
+getybnotes.py
