@@ -69,7 +69,7 @@ class Upload():
                 self.downloadUrl=uploaded['data']['downloadUrl']
                 uploads=json.loads(read_file(uploads_file))
                 uploads[os.path.basename(file)] = (uploaded['data'])
-                write_file(uploads_file,json.dumps(uploads).encode())
+                write_file(uploads_file,json.dumps(uploads, indent=4, sort_keys=True, ensure_ascii=False).encode())
                 print("上传成功: " + self.downloadUrl)
             else:
                 print("上传失败: " + response.text)
