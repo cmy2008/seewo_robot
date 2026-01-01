@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from funcs import *
 from login import *
 from api import *

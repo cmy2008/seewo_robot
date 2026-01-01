@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from qrcode import *
 from init import *
 from funcs import *

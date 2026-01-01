@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from init import *
 from login import *
 from api import *

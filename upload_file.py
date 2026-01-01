@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from login import *
 from upload import *
 from sys import argv

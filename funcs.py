@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import base64
 import json
 import time
@@ -15,7 +17,7 @@ def pxencode(data: dict):
     return {"pxSafeData": f"scData:{encode_json(data)}"}
 
 def read_file(file: str):
-    with open(file, "r") as f:
+    with open(file, "r",encoding='utf-8') as f:
         content = f.read()
         return content
 
