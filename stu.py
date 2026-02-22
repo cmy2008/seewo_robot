@@ -15,8 +15,7 @@ class stu():
         data = {"parentId": self.acc.uid}
         result=json.loads(pxdecode(api().action("GET_STUDENT_V1_PARENT_BYPARENTID_CHILDREN_LIST",pxencode(data),self.acc)))
         if result == []:
-            print("错误：未添加学生")
-            # exit()
+            raise Exception("错误：未添加学生")
         return result
 
     def get_stu(self,name):
