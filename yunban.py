@@ -45,8 +45,8 @@ class yunban:
       response = requests.request("GET", url, headers=self.headers)
       return response.json()["data"]
     
-    def getnotes(self,uid,parentuid,num):
-      url = f"https://campus.seewo.com/mis-cloud-route-server/api/kidnote/v4/parent/{parentuid}/child/{uid}/notes?start={num}&pageSize=1"
+    def getnotes(self,uid,parentuid,num,size=1):
+      url = f"https://campus.seewo.com/mis-cloud-route-server/api/kidnote/v4/parent/{parentuid}/child/{uid}/notes?start={num}&pageSize={size}"
       response = requests.request("GET", url, headers=self.headers,verify=False)
       return response.json()["data"]
     
@@ -110,7 +110,7 @@ class yunban:
       end_time = datetime.strptime(end_str, "%H:%M").time()
       
       # 获取当天日期
-      today = date.today()
+      today = datenow.today()
       
       # 组合成完整的 datetime 对象
       start_dt = datetime.combine(today, start_time)
@@ -164,3 +164,51 @@ class yunban:
       response = requests.post(url, json=payload, headers=self.headers, verify=False)
       return response.json()
     
+    def send_msg(self,sender,receiver,content,type:int,resUrl='',voiceLength=0,resConfig=''):
+      url = "https://campus.seewo.com/mis-cloud-route-server/api/kidnote/v1/note"
+
+      data = {
+        "schoolUid": self.schoolid,
+        "type": type,
+        "senderUid": sender,
+        "receiverUid": receiver,
+        "content": "",
+        "resConfig": "",
+        "tips": "",
+        "resUrl": "",
+      #  "classUid": ,
+        "isIllegal": 0,
+        "senderType": "student"
+      }
+      match type:
+          case 0:
+              data["content"]=content
+          case 1:
+              data["content"]=content
+          case 2:
+              data['resUrl'] = resUrl
+          case 3:
+              data['voiceLength'] = voiceLength
+              data['resUrl'] = resUrl
+          case 4:
+              data['resUrl'] = resUrl
+          case 5:
+              data['resUrl'] = resUrl
+          case 6:
+              data['resUrl'] = resUrl
+              data['resConfig'] = resConfig
+      #post=api().action("POST_KIDNOTE_V1_NOTE",data,self.acc)
+      #code = post["statusCode"]
+
+      response = requests.post(url, json=data, headers=self.headers, verify=False)
+      code=response.status_code
+      if code == -500:
+          print("发送失败")
+          return False
+      elif code == 200:
+          print("发送成功：" + content)
+          return True
+      else:
+          print("unknown error:")
+          print(response.text)
+      return response.json()

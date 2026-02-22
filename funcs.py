@@ -31,11 +31,11 @@ def load_json(file: str):
     return json.loads(read_file(file))
 
 
-def date():
+def datenow():
     return '[' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()) + ']: '
 
 def logw(t: str):
-        log=date() + t + '\n'
+        log=datenow() + t + '\n'
         log_dir='logs/'
         dirc=log_dir + filedate + '.log'
         if not os.path.isdir(log_dir):

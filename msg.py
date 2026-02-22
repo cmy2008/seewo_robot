@@ -48,8 +48,14 @@ class msg():
                 data["content"]=content
             case 1:
                 data["content"]=content
+            case 2:
+                data['resUrl'] = resUrl
             case 3:
                 data['voiceLength'] = voiceLength
+                data['resUrl'] = resUrl
+            case 4:
+                data['resUrl'] = resUrl
+            case 5:
                 data['resUrl'] = resUrl
             case 6:
                 data['resUrl'] = resUrl

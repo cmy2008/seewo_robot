@@ -54,7 +54,7 @@ def main():
                 log="[ERROR] 消息获取失败"
                 logw(log)
             logw(last_msg)
-            print(date()+last_msg)
+            print(datenow()+last_msg)
         else:
             last_msg=" "
         if last_msg == '':
