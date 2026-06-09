@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from login import *
-from upload import *
+import os
 from sys import argv
+
+from login import acc
+from upload import Upload
 
 def upload_file(account: acc,file,type="image/png"):
     up=Upload(account)

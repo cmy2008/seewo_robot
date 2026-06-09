@@ -38,6 +38,8 @@ class Upload():
             print(post)
         except KeyError:
             print(self.res['message'])
+        except Exception as e:
+            print(f"上传异常: {e}")
         return None
     
     def upload(self,file,type="image/png"):
