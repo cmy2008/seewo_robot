@@ -10,6 +10,7 @@ class stu():
         self.schoolUid = info["schoolUid"]
         self.classUid = info["classUid"]
         self.userUid = info["userUid"]
+        self.name = info.get("realName", "学生")
 
     def info(self)->dict:
         data = {"parentId": self.acc.uid}

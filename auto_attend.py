@@ -20,4 +20,4 @@ for stu in students:
     datenow=time.strftime('%Y-%m-%d', time.localtime())
     timenow=time.strftime('%H:%M:%S', time.localtime())
     print(test.attend(stu["name"],stu["uid"],stu["sid"],event,datenow,faketime,classlist[35]["uid"],classlist[35]["roomUid"]))
-    print(f"{stu["name"]}已签到，时间：{datenow} {faketime}")
+    print(f'{stu["name"]}已签到，时间：{datenow} {faketime}')
