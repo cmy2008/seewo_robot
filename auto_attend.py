@@ -8,7 +8,7 @@ students = test.getstulist(classlist[35]["uid"])
 events = test.getevents(classlist[35]["roomUid"])
 uidlist = []
 for stu in students:
-    # stu=test.serchstubyuid(uid,students)
+    # stu=test.searchstubyuid(uid,students)
     try:
         if sys.argv[1]:
             event = events[int(sys.argv[1])]

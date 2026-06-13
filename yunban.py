@@ -5,6 +5,7 @@ from login import *
 from api import *
 import random
 from datetime import datetime, date, timedelta
+import time
 
 
 def getpass(account: acc, schoolUid, snCode, time, classUid=""):
@@ -65,13 +66,13 @@ class yunban:
         response = requests.request("GET", url, headers=self.headers, verify=False)
         return response.json()["data"][0]["students"]
 
-    def serchstubyname(self, stuname, students):
+    def searchstubyname(self, stuname, students):
         for stu in students:
             if stu["name"] == stuname:
                 return stu
         return {}
 
-    def serchstubyuid(self, stuname, students):
+    def searchstubyuid(self, stuname, students):
         for stu in students:
             if stu["uid"] == stuname:
                 return stu
@@ -118,7 +119,7 @@ class yunban:
         end_time = datetime.strptime(end_str, "%H:%M").time()
 
         # 获取当天日期
-        today = datenow.today()
+        today = date.today()
 
         # 组合成完整的 datetime 对象
         start_dt = datetime.combine(today, start_time)
