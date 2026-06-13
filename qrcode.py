@@ -3,6 +3,7 @@
 import numpy as np
 from PIL import Image
 
+
 # 计算每个方块的大小像素
 def get_cell_size(img, x, y, x2, y2):
     for j in range(x, x2):
@@ -10,6 +11,7 @@ def get_cell_size(img, x, y, x2, y2):
             pix = img.getpixel((j, i))
             if pix == 255:
                 return j - x  # 每个黑色格子的像素点大小
+
 
 def get_cell(img, w: int, h: int):
     flag = 0
@@ -20,31 +22,35 @@ def get_cell(img, w: int, h: int):
                 x1 = x
                 flag = 1
 
-            if pix == 255 and flag == 1:  # 出现第一个白色像素（意味着左上角的标记方块横向结束）
+            if (
+                pix == 255 and flag == 1
+            ):  # 出现第一个白色像素（意味着左上角的标记方块横向结束）
                 flag = 2
                 cell = get_cell_size(img, x1, x1, x, x)
                 return cell
 
+
 unicode_chr = " ▗▖▄▝▐▞▟▘▚▌▙▀▜▛█"
 # Unicode characters mapped to the corresponding double-character representation
 unicode_mapping = {
-    ' ': '  ',
-    '▗': ' ▄',
-    '▖': '▄ ',
-    '▄': '▄▄',
-    '▝': ' ▀',
-    '▐': ' █',
-    '▞': '▄▀',
-    '▟': '▄█',
-    '▘': '▀ ',
-    '▚': '▀▄',
-    '▌': '█ ',
-    '▙': '█▄',
-    '▀': '▀▀',
-    '▜': '▀█',
-    '▛': '█▀',
-    '█': '██'
+    " ": "  ",
+    "▗": " ▄",
+    "▖": "▄ ",
+    "▄": "▄▄",
+    "▝": " ▀",
+    "▐": " █",
+    "▞": "▄▀",
+    "▟": "▄█",
+    "▘": "▀ ",
+    "▚": "▀▄",
+    "▌": "█ ",
+    "▙": "█▄",
+    "▀": "▀▀",
+    "▜": "▀█",
+    "▛": "█▀",
+    "█": "██",
 }
+
 
 def get_qrcode(cell, img, w: int, h: int):
     height = int(h / cell)
@@ -83,8 +89,9 @@ def get_qrcode(cell, img, w: int, h: int):
 
     print(code)
 
+
 def print_qrcode(file):
     im = Image.open(file)
-    pil_image = im.crop((15,15,im.size[0],im.size[1]))
-    width,height = pil_image.size
+    pil_image = im.crop((15, 15, im.size[0], im.size[1]))
+    width, height = pil_image.size
     get_qrcode(get_cell(pil_image, width, height), pil_image, width, height)

@@ -16,11 +16,14 @@ from textual.message import Message
 
 # 加载配置
 CONFIG_FILE = "config.json"
+
+
 def load_config() -> dict:
     if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     return {}
+
 
 config = load_config()
 API_KEY = config.get("api_key", "your-secret-key")
@@ -29,6 +32,7 @@ API_URL = f"http://localhost:{config.get('api_port', 5000)}"
 
 class MessageWidget(Static):
     """消息显示组件"""
+
     def __init__(self, msg_data: dict):
         self.msg_data = msg_data
         self.sender = msg_data.get("sender", "unknown")
@@ -41,7 +45,15 @@ class MessageWidget(Static):
         msg_type = self.msg_data.get("type", 1)
 
         # 格式化显示
-        type_map = {0: "[TXT]", 1: "[TXT]", 2: "[IMG]", 3: "[AUD]", 4: "[VID]", 5: "[FILE]", 6: "[RICH]"}
+        type_map = {
+            0: "[TXT]",
+            1: "[TXT]",
+            2: "[IMG]",
+            3: "[AUD]",
+            4: "[VID]",
+            5: "[FILE]",
+            6: "[RICH]",
+        }
         type_icon = type_map.get(int(msg_type), "[MSG]")
 
         # 处理空内容（图片/音频等）
@@ -60,6 +72,7 @@ class MessageWidget(Static):
 
 class StatusWidget(Static):
     """状态显示组件"""
+
     status = reactive("未连接")
 
     def watch_status(self, status: str):
@@ -159,12 +172,12 @@ class SeewoTUI(App):
             Horizontal(
                 Input(placeholder="输入消息内容...", id="msg-input"),
                 Button("发送", id="send-btn"),
-                classes="input-area"
+                classes="input-area",
             ),
             Horizontal(
                 Button("加载更早", id="load-btn", classes="load-btn"),
                 Button("全量同步", id="sync-btn", classes="sync-btn"),
-                classes="button-area"
+                classes="button-area",
             ),
         )
         yield Footer()
@@ -179,7 +192,10 @@ class SeewoTUI(App):
         """检查API连接状态"""
         try:
             import requests
-            resp = requests.get(f"{API_URL}/api/status", headers={"X-API-Key": API_KEY}, timeout=5)
+
+            resp = requests.get(
+                f"{API_URL}/api/status", headers={"X-API-Key": API_KEY}, timeout=5
+            )
             if resp.status_code == 200:
                 data = resp.json()
                 student = data.get("student", {})
@@ -193,7 +209,12 @@ class SeewoTUI(App):
         """加载消息列表"""
         try:
             import requests
-            resp = requests.get(f"{API_URL}/api/messages?count=20", headers={"X-API-Key": API_KEY}, timeout=5)
+
+            resp = requests.get(
+                f"{API_URL}/api/messages?count=20",
+                headers={"X-API-Key": API_KEY},
+                timeout=5,
+            )
             if resp.status_code == 200:
                 data = resp.json()
                 self.messages = data.get("messages", [])
@@ -205,11 +226,18 @@ class SeewoTUI(App):
         """加载本地历史记录"""
         try:
             import requests
-            resp = requests.get(f"{API_URL}/api/history?limit=100", headers={"X-API-Key": API_KEY}, timeout=5)
+
+            resp = requests.get(
+                f"{API_URL}/api/history?limit=100",
+                headers={"X-API-Key": API_KEY},
+                timeout=5,
+            )
             if resp.status_code == 200:
                 data = resp.json()
                 self.messages = data.get("messages", [])
-                self.has_more = data.get("earliest_id", 0) > 0  # 如果 earliest_id > 0，可能还有更早的
+                self.has_more = (
+                    data.get("earliest_id", 0) > 0
+                )  # 如果 earliest_id > 0，可能还有更早的
                 self.render_messages()
         except Exception as e:
             self.query_one("#message-list").mount(Static(f"加载失败: {e}"))
@@ -222,7 +250,12 @@ class SeewoTUI(App):
 
         try:
             import requests
-            resp = requests.get(f"{API_URL}/api/load_earlier?count=50", headers={"X-API-Key": API_KEY}, timeout=10)
+
+            resp = requests.get(
+                f"{API_URL}/api/load_earlier?count=50",
+                headers={"X-API-Key": API_KEY},
+                timeout=10,
+            )
             if resp.status_code == 200:
                 data = resp.json()
                 new_msgs = data.get("messages", [])
@@ -245,17 +278,20 @@ class SeewoTUI(App):
 
         try:
             import requests
+
             resp = requests.post(
                 f"{API_URL}/api/sync_all",
                 headers={"X-API-Key": API_KEY},
                 json={"batch_size": 50, "delay": 2.0},
-                timeout=300  # 5分钟超时
+                timeout=300,  # 5分钟超时
             )
             if resp.status_code == 200:
                 data = resp.json()
                 synced_count = data.get("synced_count", 0)
                 total_count = data.get("total_count", 0)
-                self.query_one("#message-list").mount(Static(f"同步完成: 新增 {synced_count} 条，共 {total_count} 条"))
+                self.query_one("#message-list").mount(
+                    Static(f"同步完成: 新增 {synced_count} 条，共 {total_count} 条")
+                )
                 await self.load_history()  # 重新加载历史
             else:
                 self.query_one("#message-list").mount(Static(f"同步失败: {resp.text}"))
@@ -288,11 +324,12 @@ class SeewoTUI(App):
 
         try:
             import requests
+
             resp = requests.post(
                 f"{API_URL}/api/send",
                 headers={"X-API-Key": API_KEY},
                 json={"content": content},
-                timeout=5
+                timeout=5,
             )
             if resp.status_code == 200:
                 self.query_one("#msg-input").value = ""
@@ -340,11 +377,15 @@ class SeewoTUI(App):
 
     def action_image(self) -> None:
         """发送图片"""
-        self.query_one("#message-list").mount(Static("提示: python client.py image <文件路径>"))
+        self.query_one("#message-list").mount(
+            Static("提示: python client.py image <文件路径>")
+        )
 
     def action_audio(self) -> None:
         """发送音频"""
-        self.query_one("#message-list").mount(Static("提示: python client.py audio <文件路径>"))
+        self.query_one("#message-list").mount(
+            Static("提示: python client.py audio <文件路径>")
+        )
 
 
 if __name__ == "__main__":

@@ -7,15 +7,16 @@ import json, requests
 import time
 import os
 
-class acc():
-    def __init__(self,type=0) -> None:
-        if type==0:
+
+class acc:
+    def __init__(self, type=0) -> None:
+        if type == 0:
             if not os.path.exists(token_file):
                 self.__init__(type=1)
                 return None
             else:
                 info = load_json(token_file)
-        elif type==1:
+        elif type == 1:
             login()
             info = load_json(token_file)
         else:
@@ -30,7 +31,7 @@ class acc():
             "cookie": f"x-auth-appCode=seewo-yunban-mobile; x-auth-token={info['token']}; x-token={info['token']}",
             "accept-encoding": "gzip",
             "content-type": "application/json",
-            "host": "campus.seewo.com"
+            "host": "campus.seewo.com",
         }
         self.mheaders = {
             "x-info-sign": "",
@@ -40,14 +41,14 @@ class acc():
             "x-auth-appcode": "seewo-yunban-mobile",
             "cookie": f"x-auth-appCode=seewo-yunban-mobile; x-auth-token={info['token']}; x-token={info['token']}",
             "accept-encoding": "gzip",
-            "content-type": "application/json"
+            "content-type": "application/json",
         }
         if not self.check_status():
             self.__init__(type=1)
             return None
         return None
-    
-    def status(self,re):
+
+    def status(self, re):
         code = json.loads(re)["statusCode"]
         if code == -500:
             print("登录失败：token无效")
@@ -58,14 +59,18 @@ class acc():
         elif code == 200:
             return True
         else:
-            print(re,end='\n')
+            print(re, end="\n")
             return False
-        
+
     def check_status(self):
         re = requests.get(
-            urls().status + self.uid + "/functionality", headers=self.headers, proxies=proxies, verify=verify
+            urls().status + self.uid + "/functionality",
+            headers=self.headers,
+            proxies=proxies,
+            verify=verify,
         )
         return self.status(re.text)
+
 
 def get_cookies():
     re = requests.get(url=urls().login_api, headers=headers_nocookie, proxies=proxies)

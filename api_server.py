@@ -24,12 +24,15 @@ app = Flask(__name__)
 
 # 加载配置
 CONFIG_FILE = "config.json"
+
+
 def load_config() -> dict:
     """加载配置文件"""
     if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     return {}
+
 
 config = load_config()
 API_KEY = config.get("api_key", "your-secret-key")
@@ -39,12 +42,14 @@ API_HOST = config.get("api_host", "0.0.0.0")
 
 def require_api_key(f):
     """API密钥验证装饰器"""
+
     @wraps(f)
     def decorated(*args, **kwargs):
         key = request.headers.get("X-API-Key") or request.args.get("api_key")
         if key != API_KEY:
             return jsonify({"error": "Unauthorized", "message": "Invalid API key"}), 401
         return f(*args, **kwargs)
+
     return decorated
 
 
@@ -83,21 +88,24 @@ def upload_file_to_cloud(file_path: str, content_type: str = "image/png") -> str
 
 # ============== API 路由 ==============
 
+
 @app.route("/api/status", methods=["GET"])
 @require_api_key
 def get_status():
     """获取服务状态"""
     try:
         session.init()
-        return jsonify({
-            "status": "ok",
-            "student": {
-                "name": getattr(session.student, "name", "unknown"),
-                "schoolUid": getattr(session.student, "schoolUid", ""),
-                "classUid": getattr(session.student, "classUid", ""),
-                "userUid": getattr(session.student, "userUid", "")
+        return jsonify(
+            {
+                "status": "ok",
+                "student": {
+                    "name": getattr(session.student, "name", "unknown"),
+                    "schoolUid": getattr(session.student, "schoolUid", ""),
+                    "classUid": getattr(session.student, "classUid", ""),
+                    "userUid": getattr(session.student, "userUid", ""),
+                },
             }
-        })
+        )
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -126,7 +134,10 @@ def get_messages():
             create_time = msg.get("createTime", 0)
             if create_time:
                 from datetime import datetime
-                time_str = datetime.fromtimestamp(create_time / 1000).strftime('%Y-%m-%d %H:%M:%S')
+
+                time_str = datetime.fromtimestamp(create_time / 1000).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
             else:
                 time_str = ""
 
@@ -142,21 +153,19 @@ def get_messages():
                 sender = "unknown"
                 sender_name = msg.get("senderName", "未知")
 
-            messages.append({
-                "id": msg.get("id", 0),
-                "time": time_str,
-                "content": msg.get("content", ""),
-                "type": msg.get("type", 1),
-                "sender": sender,
-                "senderName": sender_name,
-                "resUrl": msg.get("resUrl", "")
-            })
+            messages.append(
+                {
+                    "id": msg.get("id", 0),
+                    "time": time_str,
+                    "content": msg.get("content", ""),
+                    "type": msg.get("type", 1),
+                    "sender": sender,
+                    "senderName": sender_name,
+                    "resUrl": msg.get("resUrl", ""),
+                }
+            )
 
-        return jsonify({
-            "status": "ok",
-            "count": len(messages),
-            "messages": messages
-        })
+        return jsonify({"status": "ok", "count": len(messages), "messages": messages})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -181,10 +190,12 @@ def send_message():
             content = content[:196] + "..."
 
         success = session.stu_msg.send(content, 1)
-        return jsonify({
-            "status": "ok" if success else "error",
-            "message": "发送成功" if success else "发送失败"
-        })
+        return jsonify(
+            {
+                "status": "ok" if success else "error",
+                "message": "发送成功" if success else "发送失败",
+            }
+        )
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -277,16 +288,18 @@ def get_history():
 
         # 分页
         total = len(messages)
-        messages = messages[offset:offset + limit]
+        messages = messages[offset : offset + limit]
 
-        return jsonify({
-            "status": "ok",
-            "total": total,
-            "earliest_id": history.get("earliest_id", 0),
-            "last_id": history.get("last_id", 0),
-            "count": len(messages),
-            "messages": messages
-        })
+        return jsonify(
+            {
+                "status": "ok",
+                "total": total,
+                "earliest_id": history.get("earliest_id", 0),
+                "last_id": history.get("last_id", 0),
+                "count": len(messages),
+                "messages": messages,
+            }
+        )
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -308,19 +321,23 @@ def load_earlier_messages():
 
         # 如果 earliest_id 为 0，说明没有记录
         if earliest_id == 0:
-            return jsonify({"status": "error", "message": "no messages in history"}), 400
+            return jsonify(
+                {"status": "error", "message": "no messages in history"}
+            ), 400
 
         # 获取更早的消息
         earlier_msgs = session.stu_msg.get_earlier_messages(earliest_id, count)
 
         if not earlier_msgs:
-            return jsonify({
-                "status": "ok",
-                "message": "已到达最早消息",
-                "has_more": False,
-                "count": 0,
-                "messages": []
-            })
+            return jsonify(
+                {
+                    "status": "ok",
+                    "message": "已到达最早消息",
+                    "has_more": False,
+                    "count": 0,
+                    "messages": [],
+                }
+            )
 
         # 格式化并保存到本地
         parent_uid = session.account.uid
@@ -332,7 +349,10 @@ def load_earlier_messages():
             create_time = msg.get("createTime", 0)
             if create_time:
                 from datetime import datetime
-                time_str = datetime.fromtimestamp(create_time / 1000).strftime('%Y-%m-%d %H:%M:%S')
+
+                time_str = datetime.fromtimestamp(create_time / 1000).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
             else:
                 time_str = ""
 
@@ -355,7 +375,7 @@ def load_earlier_messages():
                 "type": msg.get("type", 1),
                 "sender": sender,
                 "senderName": sender_name,
-                "resUrl": msg.get("resUrl", "")
+                "resUrl": msg.get("resUrl", ""),
             }
             formatted_msgs.append(formatted_msg)
 
@@ -365,12 +385,14 @@ def load_earlier_messages():
         # 判断是否还有更早的消息
         has_more = len(earlier_msgs) >= count
 
-        return jsonify({
-            "status": "ok",
-            "has_more": has_more,
-            "count": len(formatted_msgs),
-            "messages": formatted_msgs
-        })
+        return jsonify(
+            {
+                "status": "ok",
+                "has_more": has_more,
+                "count": len(formatted_msgs),
+                "messages": formatted_msgs,
+            }
+        )
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -400,7 +422,9 @@ def sync_all_messages():
                 earliest_id = min(m.get("id", 0) for m in latest_msgs)
 
         # 获取所有历史消息
-        all_msgs = session.stu_msg.get_all_messages_until_earliest(earliest_id, batch_size, delay)
+        all_msgs = session.stu_msg.get_all_messages_until_earliest(
+            earliest_id, batch_size, delay
+        )
 
         # 格式化并保存
         parent_uid = session.account.uid
@@ -411,7 +435,10 @@ def sync_all_messages():
             create_time = msg.get("createTime", 0)
             if create_time:
                 from datetime import datetime
-                time_str = datetime.fromtimestamp(create_time / 1000).strftime('%Y-%m-%d %H:%M:%S')
+
+                time_str = datetime.fromtimestamp(create_time / 1000).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
             else:
                 time_str = ""
 
@@ -433,7 +460,7 @@ def sync_all_messages():
                 "type": msg.get("type", 1),
                 "sender": sender,
                 "senderName": sender_name,
-                "resUrl": msg.get("resUrl", "")
+                "resUrl": msg.get("resUrl", ""),
             }
             formatted_msgs.append(formatted_msg)
 
@@ -444,12 +471,14 @@ def sync_all_messages():
         if formatted_msgs:
             update_earliest_id(min(m["id"] for m in formatted_msgs))
 
-        return jsonify({
-            "status": "ok",
-            "message": "全量同步完成",
-            "synced_count": len(formatted_msgs),
-            "total_count": len(load_chat_history().get("messages", []))
-        })
+        return jsonify(
+            {
+                "status": "ok",
+                "message": "全量同步完成",
+                "synced_count": len(formatted_msgs),
+                "total_count": len(load_chat_history().get("messages", [])),
+            }
+        )
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 

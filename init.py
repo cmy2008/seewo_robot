@@ -11,8 +11,8 @@ uploads_file = "uploads.json"
 if not os.path.isfile(uploads_file):
     with open(uploads_file, "wb") as f:
         f.write(b"{}")
-proxies: dict[str, str] = {}# type: ignore
-verify=True
+proxies: dict[str, str] = {}  # type: ignore
+verify = True
 headers_nocookie = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
     "Accept": "image/avif,image/webp,*/*",
@@ -28,14 +28,14 @@ headers_nocookie = {
 
 class urls:
     def __init__(self) -> None:
-        self.time=str(
-        int(time.time()) * 1000
-    )
+        self.time = str(int(time.time()) * 1000)
         self.status = "https://campus.seewo.com/soul-bootstrap/seewo-phoenix-blood-server/mobile/user/v1/"
         self.get_last_msg = "https://campus.seewo.com/soul-bootstrap/home-school-service/mobile/kidnote/v1/note/dialogs?userUid="
         self.api = "https://m-campus.seewo.com/class/apis.json?action="
         self.login_api = "https://id.seewo.com/auth/loginApi?_time" + self.time
-        self.qrcode_image = "https://id.seewo.com/scan/qrcode?oriSys=mis-admin&t=" + self.time
-        self.check_qrcode = "https://id.seewo.com/scan/pcCheckQrcode?type=long&_=" + self.time
-
-
+        self.qrcode_image = (
+            "https://id.seewo.com/scan/qrcode?oriSys=mis-admin&t=" + self.time
+        )
+        self.check_qrcode = (
+            "https://id.seewo.com/scan/pcCheckQrcode?type=long&_=" + self.time
+        )
