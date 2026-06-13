@@ -18,12 +18,15 @@ from yunban import *
 
 # 加载配置
 CONFIG_FILE = "config.json"
+
+
 def load_config() -> dict:
     """加载配置文件"""
     if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     return {}
+
 
 config = load_config()
 POLL_BATCH_SIZE = config.get("poll_batch_size", 50)
@@ -60,7 +63,7 @@ def send_audio(file):
         stu_msg.send(os.path.basename(file), 1)
         url = upload_file(account, file)
         if url:
-            stu_msg.send('', 3, url, 666)
+            stu_msg.send("", 3, url, 666)
         else:
             send_msg(f"[ERROR] 文件上传失败: {file}")
     except Exception as e:
@@ -69,7 +72,7 @@ def send_audio(file):
 
 def handle_command(command_text: str):
     """处理以/开头的命令"""
-    args = command_text.split(' ')
+    args = command_text.split(" ")
     match args[0]:
         case "getpass":
             if len(args) >= 3:
@@ -105,7 +108,9 @@ def main():
     earliest_id = history.get("earliest_id", 0)
     total_msgs = len(history.get("messages", []))
 
-    print(f"已加载聊天记录，最后消息ID: {msg_id}，最早消息ID: {earliest_id}，共 {total_msgs} 条")
+    print(
+        f"已加载聊天记录，最后消息ID: {msg_id}，最早消息ID: {earliest_id}，共 {total_msgs} 条"
+    )
 
     # 快速启动：只获取最近100条消息（如果本地没有记录）
     if total_msgs == 0:
@@ -127,7 +132,7 @@ def main():
         except Exception as err:
             logw(f"[ERROR] 获取历史消息失败: {err}")
 
-    last_msg = ' '
+    last_msg = " "
     consecutive_errors = 0
     current_interval = BASE_INTERVAL
 

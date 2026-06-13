@@ -5,47 +5,55 @@ import json
 import time
 import os
 
-filedate=time.strftime('%Y-%m-%d', time.localtime())
+filedate = time.strftime("%Y-%m-%d", time.localtime())
+
 
 def encode_json(data: dict):
     return base64.b64encode(json.dumps(data).encode("utf-8")).decode("utf-8")
 
+
 def pxdecode(data: dict):
     return base64.b64decode(data["data"][7:])
+
 
 def pxencode(data: dict):
     return {"pxSafeData": f"scData:{encode_json(data)}"}
 
+
 def read_file(file: str):
-    with open(file, "r",encoding='utf-8') as f:
+    with open(file, "r", encoding="utf-8") as f:
         content = f.read()
         return content
+
 
 def write_file(file: str, data: bytes) -> bool:
     with open(file, "wb") as f:
         f.write(data)
     return True
 
+
 def load_json(file: str) -> dict:
     return json.loads(read_file(file))
 
 
 def datenow() -> str:
-    return '[' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()) + ']: '
+    return "[" + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + "]: "
+
 
 def logw(t: str) -> None:
     global filedate
-    log=datenow() + t + '\n'
-    log_dir='logs/'
-    dirc=log_dir + filedate + '.log'
+    log = datenow() + t + "\n"
+    log_dir = "logs/"
+    dirc = log_dir + filedate + ".log"
     if not os.path.isdir(log_dir):
         os.mkdir(log_dir)
-    with open(dirc, 'a') as file:
+    with open(dirc, "a") as file:
         file.write(log)
 
 
 # 聊天记录存储
 CHAT_LOG_FILE = "chat_history.json"
+
 
 def load_chat_history() -> dict:
     """加载聊天记录，返回 {last_id: int, earliest_id: int, messages: list}"""
@@ -66,35 +74,37 @@ def load_chat_history() -> dict:
 
 def save_chat_history(history: dict) -> None:
     """保存聊天记录"""
-    with open(CHAT_LOG_FILE, 'w', encoding='utf-8') as f:
+    with open(CHAT_LOG_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
 
-def append_message(msg_id: int, content: str, msg_type: str = "text", sender: str = "") -> None:
+def append_message(
+    msg_id: int, content: str, msg_type: str = "text", sender: str = ""
+) -> None:
     """追加一条消息到聊天记录
-    
+
     注意：消息会按ID排序，确保顺序正确（旧→新）
     """
     history = load_chat_history()
-    
+
     # 添加新消息
     new_msg = {
         "id": msg_id,
-        "time": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()),
+        "time": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
         "content": content,
         "type": msg_type,
-        "sender": sender
+        "sender": sender,
     }
     history["messages"].append(new_msg)
-    
+
     # 按ID排序（旧→新）
     history["messages"] = sorted(history["messages"], key=lambda m: m["id"])
-    
+
     # 更新 last_id 为最大ID
     if history["messages"]:
         history["last_id"] = max(m["id"] for m in history["messages"])
         history["earliest_id"] = min(m["id"] for m in history["messages"])
-    
+
     save_chat_history(history)
 
 

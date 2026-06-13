@@ -10,12 +10,15 @@ from typing import Optional
 
 # 加载配置
 CONFIG_FILE = "config.json"
+
+
 def load_config() -> dict:
     """加载配置文件"""
     if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     return {}
+
 
 _config = load_config()
 DEFAULT_API_KEY = _config.get("api_key", "your-secret-key")
@@ -48,7 +51,12 @@ class SeewoClient:
         """发送文本消息"""
         return self._request("POST", "/api/send", json={"content": content})
 
-    def send_image(self, file_path: str = None, file_data: bytes = None, filename: str = "image.png") -> dict:
+    def send_image(
+        self,
+        file_path: str = None,
+        file_data: bytes = None,
+        filename: str = "image.png",
+    ) -> dict:
         """发送图片
 
         Args:
@@ -73,14 +81,17 @@ class SeewoClient:
             file_path: 音频文件路径
             voice_length: 音频时长(毫秒)
         """
-        return self._request("POST", "/api/send_audio", json={
-            "file_path": file_path,
-            "voice_length": voice_length
-        })
+        return self._request(
+            "POST",
+            "/api/send_audio",
+            json={"file_path": file_path, "voice_length": voice_length},
+        )
 
     def get_history(self, limit: int = 50, offset: int = 0) -> dict:
         """获取聊天记录"""
-        return self._request("GET", "/api/history", params={"limit": limit, "offset": offset})
+        return self._request(
+            "GET", "/api/history", params={"limit": limit, "offset": offset}
+        )
 
     def refresh_session(self) -> dict:
         """刷新会话"""
